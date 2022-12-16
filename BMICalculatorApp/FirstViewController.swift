@@ -1,9 +1,19 @@
-//
-//  ViewController.swift
-//  BMICalculatorApp
-//
-//  Created by Kisu on 2022-12-15.
-//
+//  FirstViewController.swift
+/*
+    App Name: BMICalculatorApp
+    Version: 1.0
+ 
+    Created on: 2022-12-15.
+    Created by: Krishna Patel (301268911)
+ 
+    Description:
+    This is a BMI Calculator App that will be used to calculate BMI based on the height and weight entered by user.
+    The reset button will reset all the fields' values.
+    The calculate button will calculate the BMI and displays the score along with category.
+    The track BMI history button will redirect to the second screen, that displays user info and previous BMI records of for the user.
+    If we swipe from left to right, we can edit the record by entering new value of weight,that will automatically calculate the new BMI and update the record.
+    If we swipe from right to left, we can delete the record.
+*/
 
 import UIKit
 import CoreData
@@ -13,6 +23,7 @@ class FirstViewController: UIViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private var bmiResultList = [BMIResultList]()
     
+    //variable declaration for textfields,labels and switch
     @IBOutlet weak var nameText: UITextField!
     @IBOutlet weak var ageText: UITextField!
     @IBOutlet weak var genderText: UITextField!
@@ -34,6 +45,7 @@ class FirstViewController: UIViewController {
         super.viewDidLoad()
     }
 
+    //toggle switch for measurement unit selection
     @IBAction func UnitSwitch(_ sender: UISwitch) {
         if imperialSwitch.isOn {
             heightText.placeholder = "Enter Your Height In inches"
@@ -45,6 +57,7 @@ class FirstViewController: UIViewController {
         }
     }
     
+    //reset button functionality
     @IBAction func ResetBtn(_ sender: UIButton) {
         nameText.text = ""
         ageText.text = ""
@@ -55,10 +68,12 @@ class FirstViewController: UIViewController {
         bmiMessageLbl.text = "Normal..!!"
     }
     
+    //BMI calculation button functionality
     @IBAction func CalculateBtn(_ sender: UIButton) {
         weight = Float(self.weightText.text!)
         height = Float(self.heightText.text!)
 
+        //for imperial units (pounds & inches)
         if imperialSwitch.isOn
         {
             bmi = Float((weight!*703)/(height!*height!))
@@ -74,6 +89,7 @@ class FirstViewController: UIViewController {
             else if (bmi! >= 35 && bmi! <= 40) {self.bmiMessageLbl.text = "Obese Class II"}
             else if (bmi! > 40) {self.bmiMessageLbl.text = "Obese Class III"}
         }
+        //for standard units (kg & cm)
         else
         {
             bmi = Float((weight!*10000)/(height!*height!))
@@ -92,10 +108,10 @@ class FirstViewController: UIViewController {
         addResult(weight: Float(weight!) , bmi: Float(roundedBMI))
     }
 
+    //add BMI record into coredata
     func addResult(weight :Float, bmi : Float)
     {
         let date = Date()
-        
         let newResult = BMIResultList(context: context)
         
         newResult.name = nameText.text
@@ -113,6 +129,7 @@ class FirstViewController: UIViewController {
         catch{}
     }
 
+    //navigate to second screen
     @IBAction func TrackBMIHistoryBtn(_ sender: UIButton) {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "SecondViewController") as! SecondViewController
         self.navigationController?.pushViewController(vc , animated: true)
