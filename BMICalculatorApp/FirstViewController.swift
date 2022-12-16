@@ -18,12 +18,13 @@ class FirstViewController: UIViewController {
     @IBOutlet weak var bmiResult: UILabel!
     @IBOutlet weak var bmiMessage: UILabel!
     
+    var date:Date = Date()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
 
-    
     @IBAction func UnitSwitch(_ sender: UISwitch) {
         if imperialSwitch.isOn {
             height.placeholder = "Enter Your Height In inches"
@@ -34,7 +35,6 @@ class FirstViewController: UIViewController {
             weight.placeholder = "Enter Your Weight In kg"
         }
     }
-    
     
     @IBAction func ResetBtn(_ sender: UIButton) {
         name.text = ""
@@ -47,4 +47,3 @@ class FirstViewController: UIViewController {
     }
     
 }
-
