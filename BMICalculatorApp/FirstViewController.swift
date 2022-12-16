@@ -11,7 +11,7 @@ import CoreData
 class FirstViewController: UIViewController {
 
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    private var bmiResultList = [BMIResults]()
+    private var bmiResultList = [BMIResultList]()
     
     @IBOutlet weak var nameText: UITextField!
     @IBOutlet weak var ageText: UITextField!
@@ -28,7 +28,6 @@ class FirstViewController: UIViewController {
     var height:Float? = 0
     var weight:Float? = 0
     var bmi:Float? = 0
-    var date:Date = Date()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,69 +55,68 @@ class FirstViewController: UIViewController {
     }
     
     @IBAction func CalculateBtn(_ sender: UIButton) {
-        weight = Float(self.weightText.text!)!
-        height = Float(self.heightText.text!)!
+        weight = Float(self.weightText.text!)
+        height = Float(self.heightText.text!)
 
         if imperialSwitch.isOn
         {
             bmi = Float((weight!*703)/(height!*height!))
             self.bmiResultLbl.text = String(format:"%.\(2)f", bmi!)
 
-            if (bmi! < 16)
-            { self.bmiMessageLbl.text = "Severe Thinness"}
-            else if (bmi! >= 16 && bmi! < 17)
-            { self.bmiMessageLbl.text = "Moderate Thinness"}
-            else if (bmi! >= 17 && bmi! < 18.5)
-            { self.bmiMessageLbl.text = "Mild Thinness"}
-            else if (bmi! >= 18.5 && bmi! < 25)
-            { self.bmiMessageLbl.text = "Normal"}
-            else if (bmi! >= 25 && bmi! < 30)
-            { self.bmiMessageLbl.text = "Overweight"}
-            else if (bmi! >= 30 && bmi! < 35)
-            { self.bmiMessageLbl.text = "Obese Class I"}
-            else if (bmi! >= 35 && bmi! <= 40)
-            { self.bmiMessageLbl.text = "Obese Class II"}
-            else if (bmi! > 40)
-            { self.bmiMessageLbl.text = "Obese Class III"}
+            if (bmi! < 16) {self.bmiMessageLbl.text = "Severe Thinness"}
+            else if (bmi! >= 16 && bmi! < 17) {self.bmiMessageLbl.text = "Moderate Thinness"}
+            else if (bmi! >= 17 && bmi! < 18.5) {self.bmiMessageLbl.text = "Mild Thinness"}
+            else if (bmi! >= 18.5 && bmi! < 25) {self.bmiMessageLbl.text = "Normal"}
+            else if (bmi! >= 25 && bmi! < 30) {self.bmiMessageLbl.text = "Overweight"}
+            else if (bmi! >= 30 && bmi! < 35) {self.bmiMessageLbl.text = "Obese Class I"}
+            else if (bmi! >= 35 && bmi! <= 40) {self.bmiMessageLbl.text = "Obese Class II"}
+            else if (bmi! > 40) {self.bmiMessageLbl.text = "Obese Class III"}
         }
         else
         {
-            bmi = Float(weight!/(height!*height!))
+            bmi = Float((weight!*10000)/(height!*height!))
             self.bmiResultLbl.text = String(format:"%.\(2)f", bmi!)
 
-            if (bmi! < 16)
-            { self.bmiMessageLbl.text = "Severe Thinness"}
-            else if (bmi! >= 16 && bmi! < 17)
-            { self.bmiMessageLbl.text = "Moderate Thinness"}
-            else if (bmi! >= 17 && bmi! < 18.5)
-            { self.bmiMessageLbl.text = "Mild Thinness"}
-            else if (bmi! >= 18.5 && bmi! < 25)
-            { self.bmiMessageLbl.text = "Normal"}
-            else if (bmi! >= 25 && bmi! < 30)
-            { self.bmiMessageLbl.text = "Overweight"}
-            else if (bmi! >= 30 && bmi! < 35)
-            { self.bmiMessageLbl.text = "Obese Class I"}
-            else if (bmi! >= 35 && bmi! <= 40)
-            { self.bmiMessageLbl.text = "Obese Class II"}
-            else if (bmi! > 40)
-            { self.bmiMessageLbl.text = "Obese Class III"}
+            if (bmi! < 16) {self.bmiMessageLbl.text = "Severe Thinness"}
+            else if (bmi! >= 16 && bmi! < 17) {self.bmiMessageLbl.text = "Moderate Thinness"}
+            else if (bmi! >= 17 && bmi! < 18.5) {self.bmiMessageLbl.text = "Mild Thinness"}
+            else if (bmi! >= 18.5 && bmi! < 25) {self.bmiMessageLbl.text = "Normal"}
+            else if (bmi! >= 25 && bmi! < 30) {self.bmiMessageLbl.text = "Overweight"}
+            else if (bmi! >= 30 && bmi! < 35) {self.bmiMessageLbl.text = "Obese Class I"}
+            else if (bmi! >= 35 && bmi! <= 40) {self.bmiMessageLbl.text = "Obese Class II"}
+            else if (bmi! > 40) {self.bmiMessageLbl.text = "Obese Class III"}
         }
-        //addRecord(weight: Float(weight!) , bmi: Float(bmi!))
+        addResult(weight: Float(weight!) , bmi: Float(bmi!))
     }
 
-    func addRecord(weight :Float, bmi : Float){
-            let newRecord = BMIResults(context: context)
-
-            newRecord.weight = weight
-            newRecord.bmi = bmi
-
-            do{
-                try context.save()
-                print("Save")
-            }catch{
-
-            }
+    func addResult(weight :Float, bmi : Float)
+    {
+        let date = Date()
+        
+        let newResult = BMIResultList(context: context)
+        
+        newResult.name = nameText.text
+        newResult.age = ageText.text
+        newResult.gender = genderText.text
+        newResult.height = height!
+        newResult.weight = weight
+        newResult.bmi = bmi
+        newResult.date = date
+        //print(newResult)
+        do
+        {
+            try context.save()
         }
+        catch{}
+    }
 
-
+    @IBAction func TrackBMIHistoryBtn(_ sender: UIButton) {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "SecondViewController") as! SecondViewController
+        //vc.weight = weightText.text
+        //vc.bmi = bmiResultLbl.text
+        vc.name = nameText.text
+        vc.age = ageText.text
+        self.navigationController?.pushViewController(vc , animated: true)
+    }
+    
 }
