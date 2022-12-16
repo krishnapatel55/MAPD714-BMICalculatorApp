@@ -28,6 +28,7 @@ class FirstViewController: UIViewController {
     var height:Float? = 0
     var weight:Float? = 0
     var bmi:Float? = 0
+    var roundedBMI:Float = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,6 +62,7 @@ class FirstViewController: UIViewController {
         if imperialSwitch.isOn
         {
             bmi = Float((weight!*703)/(height!*height!))
+            roundedBMI = round(bmi!*100)/100.0
             self.bmiResultLbl.text = String(format:"%.\(2)f", bmi!)
 
             if (bmi! < 16) {self.bmiMessageLbl.text = "Severe Thinness"}
@@ -75,6 +77,7 @@ class FirstViewController: UIViewController {
         else
         {
             bmi = Float((weight!*10000)/(height!*height!))
+            roundedBMI = round(bmi!*100)/100.0
             self.bmiResultLbl.text = String(format:"%.\(2)f", bmi!)
 
             if (bmi! < 16) {self.bmiMessageLbl.text = "Severe Thinness"}
@@ -86,7 +89,7 @@ class FirstViewController: UIViewController {
             else if (bmi! >= 35 && bmi! <= 40) {self.bmiMessageLbl.text = "Obese Class II"}
             else if (bmi! > 40) {self.bmiMessageLbl.text = "Obese Class III"}
         }
-        addResult(weight: Float(weight!) , bmi: Float(bmi!))
+        addResult(weight: Float(weight!) , bmi: Float(roundedBMI))
     }
 
     func addResult(weight :Float, bmi : Float)
@@ -112,10 +115,6 @@ class FirstViewController: UIViewController {
 
     @IBAction func TrackBMIHistoryBtn(_ sender: UIButton) {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "SecondViewController") as! SecondViewController
-        //vc.weight = weightText.text
-        //vc.bmi = bmiResultLbl.text
-        vc.name = nameText.text
-        vc.age = ageText.text
         self.navigationController?.pushViewController(vc , animated: true)
     }
     

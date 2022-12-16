@@ -25,8 +25,6 @@ class SecondViewController: UIViewController, UITableViewDelegate, UITableViewDa
         super.viewDidLoad()
         bmiTableView.dataSource = self
         bmiTableView.delegate = self
-        nameLbl.text = name
-        ageLbl.text = age
         getAllRecords()
     }
     
@@ -40,11 +38,12 @@ class SecondViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let bmiResult = bmiResultList[indexPath.row]
+        nameLbl.text = bmiResult.name
+        ageLbl.text = bmiResult.age
         let cell = bmiTableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! CustomCell
-    
         let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .long
-        //dateFormatter.dateFormat = "EEEE, MMMM d,yyyy"
+        //dateFormatter.dateStyle = .long
+        dateFormatter.dateFormat = "MMMM d,yyyy      HH:mm"
         cell.date.text = dateFormatter.string(from: bmiResult.date)
         cell.bmi.text = String(bmiResult.bmi)
         cell.weight.text = String(bmiResult.weight)
