@@ -23,6 +23,28 @@ class FirstViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
 
-
+    
+    @IBAction func UnitSwitch(_ sender: UISwitch) {
+        if imperialSwitch.isOn {
+            height.placeholder = "Enter Your Height In inches"
+            weight.placeholder = "Enter Your Weight In pounds"
+        }
+        else {
+            height.placeholder = "Enter Your Height In cm"
+            weight.placeholder = "Enter Your Weight In kg"
+        }
+    }
+    
+    
+    @IBAction func ResetBtn(_ sender: UIButton) {
+        name.text = ""
+        age.text = ""
+        gender.text = ""
+        height.text = ""
+        weight.text = ""
+        bmiResult.text = "0"
+        bmiMessage.text = "Normal..!!"
+    }
+    
 }
 
