@@ -52,42 +52,49 @@ class SecondViewController: UIViewController, UITableViewDelegate, UITableViewDa
         return cell
     }
     
+    // edit BMI record on left to right swipe
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
-    { // update task on left to right swipe
-       let edit = UIContextualAction(style: .normal, title: "Edit"){(action,view,nil) in
-           let subMenuVC = self.storyboard?.instantiateViewController(identifier: "SecondViewController") as? SecondViewController
-           let todo = self.models[indexPath.row]
-           subMenuVC?.itemData = todo
-           self.navigationController?.pushViewController(subMenuVC!, animated: true)
-           print("edit")}
-       edit.backgroundColor=UIColor.init(red: 0/255, green: 0/255, blue: 255/255, alpha: 1)
-       return UISwipeActionsConfiguration(actions: [edit])
+    {
+        let bmiRecord = bmiResultList[indexPath.row]
+        let edit = UIContextualAction(style: .normal, title: "Edit"){(action,view,nil) in
+            // create the actual alert controller view that will be the pop-up
+            let alertController = UIAlertController(title: "Edit BMI Record", message: "Enter new value for weight", preferredStyle: .alert)
+            
+            alertController.addTextField { (weight) in
+                // configure the properties of the text field
+                alertController.textFields?.first?.text = String(bmiRecord.weight)
+            }
+            
+            // add the buttons/actions to the view controller
+            let oldWeight : Float? = Float(bmiRecord.weight)
+            let newBmi = bmiRecord.bmi / Float(oldWeight!)
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
+                
+                // this code runs when the user hits the "save" button
+                let newWeight = alertController.textFields![0].text
+                self.updateBMIRecord(record: bmiRecord, newWeight: Float(newWeight!)!, newBmi: newBmi*Float(newWeight!)!)
+            }
+            alertController.addAction(cancelAction)
+            alertController.addAction(saveAction)
+            self.present(alertController, animated: true, completion: nil)
+        }
+        edit.backgroundColor=UIColor.init(red: 0/255, green: 0/255, blue: 255/255, alpha: 1)
+        return UISwipeActionsConfiguration(actions: [edit])
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let record = bmiRecords[indexPath.row]
-        let editAction = UIContextualAction(style: .normal, title: "Edit") { _,_,_ in
-            let alert = UIAlertController(title: "Edit", message: "Edit BMI Record", preferredStyle : .alert)
-            alert.addTextField(configurationHandler:  nil)
-            alert.textFields?.first?.text = String(record.weight)
-            let strWeight: String = String(record.weight)
-            let thisWeight : Float? = Float(strWeight)
-            let newBmi = record.bmi / Float(thisWeight!)
-            alert.addAction(UIAlertAction(title: "Save",
-                                          style: .default,
-                                          handler:
-                                          { [weak self] _ in guard
-                                             let field = alert.textFields?.first,
-                                             let newName = field.text,
-                                             !newName.isEmpty
-                else{
-                    return
-                    }
-                let weight : Float? = Float(newName)
-                self?.updateRecord(record: record, newWeight: Float(weight!), newBmi: newBmi*Float(weight!))
-            }))
-            self.present (alert,animated : true)
+        let delete = UIContextualAction(style: .destructive, title: "Delete"){ _, _, _ in
+            self.context.delete(self.bmiResultList[indexPath.row])
+            do
+            {
+                try self.context.save()
+                self.getAllRecords()
+            }
+            catch{}
         }
+        return UISwipeActionsConfiguration(actions: [delete])
     }
     
     @IBAction func AddNewRecordBtn(_ sender: UIButton) {
@@ -102,6 +109,17 @@ class SecondViewController: UIViewController, UITableViewDelegate, UITableViewDa
             }
         }
         catch {}
+    }
+    
+    func updateBMIRecord(record :BMIResultList, newWeight : Float, newBmi : Float){
+        record.weight = Float(newWeight)
+        let bmi = String(format: "%.2f", Float(newBmi))
+        record.bmi = Float(bmi)!
+        do{
+            try context.save()
+            getAllRecords()
+        }
+        catch{}
     }
     
 }
